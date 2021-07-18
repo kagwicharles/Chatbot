@@ -1,15 +1,19 @@
 package com.kagwisoftwares.chatbot;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,18 +35,21 @@ public class MainActivity extends AppCompatActivity {
 
     private List<BaseMessage> messages;
 
-    public String url = "http://10.0.0.6:5000/chatbot";
+    public String url;
     private final OkHttpClient client = new OkHttpClient().newBuilder().build();
+
     private String messageFromBot;
     private String senderMessage;
+    private String ipAddress;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getIpAddress();
         EditText messageText = (EditText) findViewById(R.id.message_text);
-
         messages = new ArrayList<>();
 
         mMessageRecycler = (RecyclerView) findViewById(R.id.recycler_gchat);
@@ -56,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 senderMessage = messageText.getText().toString();
                 messages.add(new BaseMessage(senderMessage, "Charles", 1));
-                refreshList();
                 new MyAsyncTask().execute();
                 messageText.setText("");
             }
@@ -67,7 +73,40 @@ public class MainActivity extends AppCompatActivity {
         mMessageAdapter.notifyDataSetChanged();
         mMessageRecycler.scrollToPosition(messages.size() - 1);
     }
-    
+
+    private void getIpAddress() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+        alertDialog.setTitle("IP Address");
+        alertDialog.setMessage("Enter IP");
+
+        final EditText input = new EditText(MainActivity.this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+        alertDialog.setView(input);
+        //alertDialog.setIcon(R.drawable.key);
+
+        alertDialog.setPositiveButton("YES",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        ipAddress = input.getText().toString();
+                        url = "http://" + ipAddress + ":5000/chatbot";
+
+                    }
+                });
+
+        alertDialog.setNegativeButton("NO",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        finish();
+                    }
+                });
+
+        alertDialog.show();
+    }
+
     class MyAsyncTask extends AsyncTask<String, String, String> {
 
         @Override
