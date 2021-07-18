@@ -6,14 +6,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -85,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams.MATCH_PARENT);
         input.setLayoutParams(lp);
         alertDialog.setView(input);
-        //alertDialog.setIcon(R.drawable.key);
-
+        alertDialog.setCancelable(false);
+        
         alertDialog.setPositiveButton("YES",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -141,8 +140,11 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String resp) {
-            Log.d("BOT RESPONDED", resp);
-            messages.add(new BaseMessage(resp, "Bot", 0));
+            if (resp != null) {
+                messages.add(new BaseMessage(resp, "Bot", 0));
+            } else {
+                Toast.makeText(MainActivity.this, "Bot disconnected", Toast.LENGTH_SHORT).show();
+            }
             refreshList();
         }
 
