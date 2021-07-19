@@ -1,17 +1,14 @@
 package com.kagwisoftwares.chatbot;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -34,13 +31,11 @@ public class MainActivity extends AppCompatActivity {
 
     private List<BaseMessage> messages;
 
-    public String url;
+    public static String url;
     private final OkHttpClient client = new OkHttpClient().newBuilder().build();
 
     private String messageFromBot;
     private String senderMessage;
-    private String ipAddress;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,36 +69,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getIpAddress() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-        alertDialog.setTitle("IP Address");
-        alertDialog.setMessage("Enter IP");
-
-        final EditText input = new EditText(MainActivity.this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        input.setLayoutParams(lp);
-        alertDialog.setView(input);
-        alertDialog.setCancelable(false);
-        
-        alertDialog.setPositiveButton("YES",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        ipAddress = input.getText().toString();
-                        url = "http://" + ipAddress + ":5000/chatbot";
-
-                    }
-                });
-
-        alertDialog.setNegativeButton("NO",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        finish();
-                    }
-                });
-
-        alertDialog.show();
+        CustomDialog cdd=new CustomDialog(MainActivity.this, url);
+        cdd.show();
     }
 
     class MyAsyncTask extends AsyncTask<String, String, String> {
