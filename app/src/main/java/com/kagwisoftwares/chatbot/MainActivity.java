@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getIpAddress() {
         CustomDialog cdd=new CustomDialog(MainActivity.this, url);
+        cdd.setCancelable(false);
         cdd.show();
     }
 
